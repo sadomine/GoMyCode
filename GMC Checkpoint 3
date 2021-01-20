@@ -1,0 +1,249 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+df= pd.read_csv('titanic-passengers.csv',delimiter=",")
+df.head()
+
+#Expose all the missing values in the dataset
+
+df.isnull().sum()
+
+#Replacing the Age missing values in the dataset by the mean Age
+
+df['Age'].fillna(df['Age'].mean(), inplace=True)
+df.isnull().sum()
+
+#Replacing the Embarking zone missing values in the dataset by the most frequent one 'S'
+
+df["Embarked"].fillna('S',inplace=True )
+df.isnull().sum()
+
+#Deleting all the missing values of Cabin in the dataset
+
+df.dropna(axis=1, how='any', thresh=300, inplace=True)
+
+#Expose all the missing values in the dataset after pre-processing
+
+df.isnull().sum()
+
+# Distribution of Age in the population
+
+plt.title('Histogram of Passengers Ages')
+plt.xlabel('Age')
+df['Age'].plot.hist()
+
+
+# Distribution of the survival status of the population
+
+plt.title('Histogram of Survival status')
+plt.xlabel('Survival')
+df['Survived'].plot.hist()
+
+# Distribution of Ticket fare in the population
+
+plt.title('Histogram of Fare categories')
+plt.xlabel('Fare ($)')
+df['Fare'].plot.hist()
+
+# Distribution of Sex in the population
+
+plt.xlabel('Passenger Gender')
+plt.ylabel('number of passengers')
+plt.title('Gender of the Passengers')
+vc=df['Sex'].value_counts()
+vc.plot.bar(rot=45)
+
+# Distribution of Sex and Age in the population
+
+g=sns.FacetGrid(df,col='Sex')
+g.map(plt.hist,'Age')
+
+# Correlation between Sex and Age / Survival (attempt 1)
+
+g = sns.FacetGrid(df, col="Sex")
+g.map_dataframe(sns.scatterplot, x="Survived", y="Age", hue="Sex")
+g.set_axis_labels("Survival", "Age")
+g.add_legend()
+
+# Correlation between Sex and Age / Survival (attempt 2)
+
+g = sns.FacetGrid(df, col="Survived")
+g.map_dataframe(sns.scatterplot, x="Age", y="Survived", hue="Sex")
+g.set_axis_labels("Age", "Survival")
+g.add_legend()
+
+# Correlation between Sex and Age / Survival (attempt 3)
+
+g = sns.FacetGrid(df, col="Survived")
+g.map_dataframe(sns.scatterplot, x="Survived", y="Age", hue="Sex")
+g.set_axis_labels("Survival", "Age")
+g.add_legend()
+
+#Survival based on the Passenger's age
+
+g = sns.FacetGrid(df, col="Survived",)
+g.map(sns.histplot, "Age")
+
+g=sns.FacetGrid(df,col='Survived')
+g.map(plt.hist,'Age')
+
+#Survival based on the Passenger ticket fare
+
+g=sns.FacetGrid(df,col='Survived')
+g.map(plt.hist,'Fare')
+
+#Survival based on which zone did the Passenger embark from 
+
+g=sns.FacetGrid(df,col='Survived')
+g.map(plt.hist,'Embarked')
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def plot_correlation_map (df):
+    corr = df.corr()
+    s , ax = plt.subplots(figsize =( 12 , 10 ))
+    cmap = sns.diverging_palette(220 , 10 , as_cmap = True)
+    s = sns.heatmap(corr, cmap = cmap, 
+                    square=True, cbar_kws={ 'shrink' : .9 }, ax=ax, annot = True, annot_kws = { 'fontsize' : 12 })
+  
+
+plot_correlation_map(df)
+
+# This function sets up a matrix that shows the correlations between each of the different features of our database. The correlation here ranges between -0.4 and 1.
+
+# View the relation between Pclass and survival status
+
+
+df[["Pclass", "Survived"]].groupby(["Pclass"], as_index=True).mean()
+
+# Drop useless columns: Name; PassengerID; SibSp; Parch; Ticket
+
+df.drop(['Name','PassengerId','SibSp','Parch','Ticket'], axis=1)
+
+
+#Display the Names column 
+
+print(df.Name.to_string(index=False))
+
+# Create a new column called Title
+
+df['Titles'] = df['Name'].str.extract(r', (\w+\.)')
+
+df.head(889)
+
+# Distribution of Passenger Titles in the population
+
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+plt.title('Titles of the Passengers')
+vc=df['Titles'].value_counts()
+vc.plot.bar(rot=45)
+
+# Distribution of Passenger Title and Sex in the population
+
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Fare')
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+
+
+g = sns.FacetGrid(df, col="Sex")
+g.map_dataframe(sns.scatterplot, x="Sex", hue="Titles")
+g.set_axis_labels("Titles", "Sex")
+g.add_legend()
+g.set( ylim=(0, 1) )
+
+#group the titles into more useful ones 
+
+
+df["Titles"].replace({"Capt.": "Officer"},inplace=True)
+df["Titles"].replace({"Col.": "Officer"},inplace=True)
+df["Titles"].replace({"Major.": "Officer"},inplace=True)
+df["Titles"].replace({"Dr.": "Officer"},inplace=True)
+df["Titles"].replace({"Rev.": "Officer"},inplace=True)
+
+df["Titles"].replace({"Jonkheer.": "Royalty"},inplace=True)
+df["Titles"].replace({"Don.": "Royalty"},inplace=True)
+df["Titles"].replace({"Sir.": "Royalty"},inplace=True)
+df["Titles"].replace({"Lady.": "Royalty"},inplace=True)
+df["Titles"].replace({"the countess.": "Royalty"},inplace=True)
+df["Titles"].replace({"Dona.": "Royalty"},inplace=True)
+
+df["Titles"].replace({"Mlle.": "Miss"},inplace=True)
+df["Titles"].replace({"Mme.": "Miss"},inplace=True)
+df["Titles"].replace({"Miss.": "Miss"},inplace=True)
+
+df["Titles"].replace({"Ms.": "Mrs"},inplace=True)
+df["Titles"].replace({"Mr.": "Mrs"},inplace=True)
+df["Titles"].replace({"Mrs.": "Mrs"},inplace=True)
+
+df["Titles"].replace({"Master.": "Master"},inplace=True)
+df.head(889)
+
+# Distribution of Passenger new grouped Titles in the population
+
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+plt.title('Titles of the Passengers')
+vc=df['Titles'].value_counts()
+vc.plot.bar(rot=45)
+
+# Distribution of Passenger new grouped Title and Sex in the population
+
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Fare')
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+
+# Distribution of Passenger new grouped Title and Age in the population
+
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Age')
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+
+# Distribution of Passenger new grouped Title and Ticket fare in the population
+
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Fare')
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+
+# Distribution of Passenger new grouped Title and Sex in the population
+
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Sex')
+plt.xlabel('Passenger Title')
+plt.ylabel('number of passengers')
+
+#Survival based on the Passenger's Title
+
+g=sns.FacetGrid(df,col='Titles')
+g.map(plt.hist,'Survived')
+
+# Create a new column FamilySize
+# SibSp represents Siblings and Spouse of the passenger
+# Parch represents Parents and Children
+
+df['FamilySize'] = df['SibSp'] + df['Parch']
+
+df.head(889)
+
+
+#Survival based on which zone did the Passenger embark from 
+
+g=sns.FacetGrid(df,col='Survived')
+g.map(plt.hist,'FamilySize')
+
+# Is FamilySize a useful feature?
+
+
+#This feature is useful, In fact, it shows that the majority of those who survived the accident were rather single passengers or couples.
